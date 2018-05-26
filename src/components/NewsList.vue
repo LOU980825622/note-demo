@@ -6,6 +6,7 @@
     <ul>
       <li><a href="https://hfs.yunxiao.com" target="_blank">好分数主站</a></li>
       <li><a href="http://wiki.iyunxiao.com/pages/viewpage.action?pageId=29393335" target="_blank">脚手架wiki</a></li>
+      <li><router-link to="note">笔记应用</router-link></li>
     </ul>
   </div>
 </template>
