@@ -9,6 +9,7 @@ import ElementUI from 'element-ui'
 import Axios from './assets/plugin/axios'
 import checkResp from './assets/plugin/checkResp'
 import handleError from './assets/plugin/handleError';
+import store from './store'
 
 Vue.use(ElementUI)
 Vue.use(Axios)
@@ -21,6 +22,7 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
