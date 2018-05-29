@@ -1,5 +1,4 @@
 const state={
-        article:[]
-    }
-
- export default state
+    article:[]
+}
+ export default state       

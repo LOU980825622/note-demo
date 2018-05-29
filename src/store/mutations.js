@@ -3,7 +3,7 @@ import state from "./state"
 const mutations={
     add(state,data){
         let alen=state.article.length;
-        let aid;
+        let aid
         if(state.article==''){
             aid=0
         }else{
@@ -11,21 +11,21 @@ const mutations={
         }
         state.article.push({
             id:aid,
-            main:'新建笔记',
-            state:1
+            main:data,
+            status:1
         })
         console.log(state.article)
     },
     remove(state,data){
-        state.artical.splice(data,1)
+        state.article.splice(data,1)
     },
     collection(state,data){
-        let alen=state.artical.length;
+        let alen=state.article.length;
         let aid
-        if(state.artical==''){
+        if(state.article==''){
             aid=0
         }else{
-            aid=state.artical[alen-1].id-0+1
+            aid=state.article[alen-1].id-0+1
         }
         state.article.push({
             id:aid,
@@ -33,16 +33,11 @@ const mutations={
             main:data.main,
             status:2
         })
+        state.article[data].status=2
         return
     },
-    change(state,data){
-        let idx=0;
-        for(let i=0,len=state.article.length;i<len;i++){
-            if(state.article[i].id==data.id){
-                idx=i
-            }
-        }
-        state.article[idx].main=data.main
+    change(){
+        console.log('文本域内容改变')
     }
 }
 

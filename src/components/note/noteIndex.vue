@@ -16,7 +16,11 @@
                 </li>
             </ul>
             <ul class="note-center-list">
+<<<<<<< HEAD
                 <li v-for="(items,index) in article" :key="index" 
+=======
+                <li v-for="(items,index) in showNoteList" :key="index" 
+>>>>>>> dev
                     @click="btnShowArtical(index)"
                     :class="{clrblue:index==titleChose}"
                 >
@@ -82,11 +86,16 @@ export default {
         leftBtn(n){
             var that=this;
             if(n==0){
-                this.add(this.editMain);
+                // this.add(this.editMain);
                 this.editMain='新建笔记';
-                let len=this.article.length;
-                that.titleChose=this.article[len-1].id;
-                this.showKinds();
+                this.add(this.editMain);
+                that.showNoteList=[]
+                for(let i=0,len=that.article.length;i<len;i++){
+                    that.showNoteList.push(this.article[i])
+                }
+                let len=this.showNoteList.length;
+                that.titleChose=this.showNoteList[len-1].id;
+                return
             }
             if(!that.editStatus){
                 if(that.showNoteList.length>=1){
@@ -103,79 +112,73 @@ export default {
         ]),
         // 点击保存按钮
         save(){
-            this.change({
-                id:this.titleChose,
-                main:this.editMain
-            })
-            for(let i=0,len=that.article.length;i<len;i++){
-                that.showNoteList.push(that.article[i])
-            }
+            // this.change({
+            //     id:this.titleChose,
+            //     main:this.editMain
+            // })
         },
         // 点击收藏按钮
         col(){
-            this.collection({
-                tit:this.editTitle,
-                main:this.editMain
-            })
-            for(let i=0,len=that.article.length;i<len;i++){
-                that.showNoteList.push(that.article[i])
-            }
+            // this.collection({
+            //     tit:this.editTitle,
+            //     main:this.editMain
+            // })
+            // for(let i=0,len=this.article.length;i<len;i++){
+            //     this.showNoteList.push(this.article[i])
+            // }
         },
         // 点击全部或收藏按钮
         centerBtn(n){
-            var that=this;
-            that.showStatus=n;
-            that.showKinds();
-            that.titleChose=0; 
-            if(this.showNoteList!=''){
-                this.showArticalDetail(0)
-            }
+            // var that=this;
+            // that.showStatus=n;
+            // that.showKinds();
+            // that.titleChose=0; 
+            // if(this.showNoteList!=''){
+            //     this.showArticalDetail(0)
+            // }
         },
         // 点击中间文章列表
         btnShowArtical(n){
-            var that=this;
-            that.titleChose=n;
-            this.showArticalDetail(n)
+            // var that=this;
+            // that.titleChose=n;
+            // this.showArticalDetail(n)
         },
         // 获取文章列表函数封装
         showKinds(){
             var that=this;
             that.showNoteList=[];
-            if(that.showStatus==0){
-                for(let i=0,len=that.article.length;i<len;i++){
-                    that.showNoteList.push(that.article[i])
-                }
-            }else{
-                for(let i=0,len=that.article.length;i<len;i++){
-                    if(that.article[i].status==2){
-                        that.showNoteList.push(that.article[i])
-                    }
-                }
-            }
-            console.log(that.showNoteList)
+            // if(that.showStatus==0){
+            //     for(let i=0,len=that.article.length;i<len;i++){
+            //         that.showNoteList.push(that.article[i])
+            //     }
+            // }else{
+            //     for(let i=0,len=that.article.length;i<len;i++){
+            //         if(that.article[i].status==2){
+            //             that.showNoteList.push(that.article[i])
+            //         }
+            //     }
+            // }
         },
         // 显示文章详情
         showArticalDetail(n){
-            var that=this;
-            console.log(that.showNoteList)
-            if(that.showNoteList.length>1){
-                var now_id=that.showNoteList[n].id;
-                that.titleChose=that.showNoteList[n].id;
+            // var that=this;
+            // if(that.showNoteList.length>1){
+            //     var now_id=that.showNoteList[n].id;
+            //     that.titleChose=that.showNoteList[n].id;
                 
-                for(let i=0,len=that.article.length;i<len;i++){
-                    if(that.article[i].id==now_id){
-                        that.titleChose=i;
-                        that.editMain=that.article[i].main;
-                        console.log('xuanzhongdeneir:'+that.article[i].main)
-                        return
-                    }
-                }
-            }
+            //     for(let i=0,len=that.article.length;i<len;i++){
+            //         if(that.article[i].id==now_id){
+            //             that.titleChose=i;
+            //             that.editMain=that.article[i].main;
+            //             return
+            //         }
+            //     }
+            // }
         }
     },
     mounted(){
-        this.add(this.editMain);
-        this.editMain='新建笔记';
+        // this.add(this.editMain);
+        // this.editMain='新建笔记';
     }
 }
 </script>
