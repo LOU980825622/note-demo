@@ -1,12 +1,5 @@
 const state={
-        artical:[
-            // {
-            //     id:-1,
-            //     title:'',
-            //     main:'',
-            //     status:''
-            // }
-        ]
+        article:[]
     }
 
  export default state

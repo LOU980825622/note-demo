@@ -2,21 +2,19 @@ import state from "./state"
 
 const mutations={
     add(state,data){
-        let alen=state.artical.length;
-        let aid
-        if(state.artical==''){
+        let alen=state.article.length;
+        let aid;
+        if(state.article==''){
             aid=0
         }else{
-            aid=state.artical[alen-1].id-0+1
-        }   
-        
-        state.artical.push({
+            aid=state.article[alen-1].id-0+1
+        }
+        state.article.push({
             id:aid,
-            title:data.tit,
-            main:data.main,
-            status:1
+            main:'新建笔记',
+            state:1
         })
-        return
+        console.log(state.article)
     },
     remove(state,data){
         state.artical.splice(data,1)
@@ -29,16 +27,26 @@ const mutations={
         }else{
             aid=state.artical[alen-1].id-0+1
         }
-        state.artical.push({
+        state.article.push({
             id:aid,
             title:data.tit,
             main:data.main,
             status:2
         })
         return
+    },
+    change(state,data){
+        let idx=0;
+        for(let i=0,len=state.article.length;i<len;i++){
+            if(state.article[i].id==data.id){
+                idx=i
+            }
+        }
+        state.article[idx].main=data.main
     }
 }
 
 export default{
-    mutations,state
+    mutations,
+    state
 }

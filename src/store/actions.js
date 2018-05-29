@@ -1,9 +1,7 @@
-
-
-
 const actions={
     add:({commit},data) => {
         commit('add',data)
+        console.log(data)
     },
     collection:({commit},data) => {
         commit('collection',data)
