@@ -21,11 +21,7 @@
                 </li>
             </ul>
             <ul class="note-center-list">
-<<<<<<< HEAD
-                <li v-for="(items,index) in article" :key="index" 
-=======
                 <li v-for="(items,index) in showNoteList" :key="index" 
->>>>>>> dev
                     @click="btnShowArtical(index)"
                     :class="{clrblue:index==indexChose}"
                 >
