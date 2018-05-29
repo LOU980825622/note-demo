@@ -108,10 +108,10 @@ export default {
         ]),
         // 点击保存按钮
         save(){
-            // this.change({
-            //     id:this.titleChose,
-            //     main:this.editMain
-            // })
+            this.change({
+                id:this.titleChose,
+                main:this.editMain
+            })
         },
         // 点击收藏按钮
         col(){
@@ -135,9 +135,12 @@ export default {
         },
         // 点击中间文章列表
         btnShowArtical(n){
-            // var that=this;
-            // that.titleChose=n;
-            // this.showArticalDetail(n)
+            this.titleChose=n;
+            this.editMain=this.showNoteList[n].main
+            this.change({
+                id:this.titleChose,
+                main:this.editMain
+            })
         },
         // 获取文章列表函数封装
         showKinds(){
