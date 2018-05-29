@@ -42,6 +42,29 @@ const mutations={
                 return;
             }
         }
+    },
+    createnew(){
+        state.editMain='新建笔记';
+        let alen=state.article.length;
+        let aid
+        if(state.article==''){
+            aid=0
+        }else{
+            aid=state.article[alen-1].id-0+1
+        }
+        state.article.push({
+            id:aid,
+            main:state.editMain,
+            status:1
+        })
+        state.showNoteList=[]
+        for(let i=0,len=state.article.length;i<len;i++){
+            state.showNoteList.push(state.article[i])
+        }
+        let len=state.showNoteList.length;
+        state.titleChose=state.showNoteList[len-1].id;
+        state.indexChose=len-1;
+        state.collected=false;
     }
 }
 
