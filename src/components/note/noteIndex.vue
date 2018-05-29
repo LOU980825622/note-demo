@@ -9,36 +9,25 @@
         <div class="note-center">
             <p>笔记</p>
             <ul class="note-center-btn">
-                <li v-for="(items,index) in noteKinds" :key="index" @click="centerBtn(index)">
+                <li v-for="(items,index) in noteKinds" :key="index" 
+                    @click="centerBtn(index)"
+                >
                     {{ items }}
                 </li>
             </ul>
             <ul class="note-center-list">
-                <li v-for="(items,index) in showNoteList" :key="index" @click="btnShowArtical(index)"
-                 :class="{clrblue:index==titleChose}">
-                    {{ items.title }}
+                <li v-for="(items,index) in article" :key="index" 
+                    @click="btnShowArtical(index)"
+                    :class="{clrblue:index==titleChose}"
+                >
+                    {{ items.main }}
                 </li>
             </ul>
         </div>
-        <div class="note-main" v-if="!editStatus">
-            <div>
-                <p class="artical-title">{{ showArtical.title }}</p>
-                <p>{{ showArtical.main }}</p>
-            </div>
-        </div>
-        <div class="note-edit" v-else>
-            <div class="artical-title">
-                <label for="artical-title">标题：</label>
-                <input id="artical-title" type="text" placeholder="笔记标题" v-model="editTitle">
-            </div>
+        <div class="note-edit">
             <div class="artical-main">
-                <label for="artical-main">内容：</label>
                 <textarea name="" id="artical-main" cols="30" rows="10" 
-                v-model="editMain" placeholder="在此处输入文章内容。。。"></textarea>
-            </div>
-            <div class="artical-btn" >
-                <button @click="save()" v-if="collectionState==0">保存</button>
-                <button @click="col()" v-else>收藏</button>
+                v-model="editMain" placeholder="在此处输入文章内容。。。" @input="save"></textarea>
             </div>
         </div>
     </div>
@@ -46,7 +35,7 @@
 <script>
 import leftImage1 from '../../../static/images/add.png'
 import leftImage2 from '../../../static/images/collection.png'
-import {mapState, mapActions} from 'vuex'
+import {mapState, mapMutations,mapGetters} from 'vuex'
 export default {
     data(){
         return {
@@ -67,11 +56,11 @@ export default {
             noteKinds:[
                 '所有','收藏'
             ],
-            showArtical:{},
+            editMain:'新建笔记',
+            noteIndex:0,
             showNoteList:[],
-            editTitle:'这是标题',
-            editMain:'这是内容',
-            editStatus:true,
+
+            showArtical:{},
             showId:0,
             showStatus:0,
             collectionState:0,
@@ -81,7 +70,10 @@ export default {
 
     computed:{
         ...mapState({
-            artical: state=>state.artical,
+            article: state=>state.article,
+        }),
+        ...mapGetters({
+            listLen:state=>state.listLen
         })
     },
 
@@ -89,11 +81,12 @@ export default {
         // 左侧导航栏按钮
         leftBtn(n){
             var that=this;
-            if(n==0||n==1){
-                that.editStatus=true;
-                that.collectionState=n;
-                that.titleChose=-1;
-                return;
+            if(n==0){
+                this.add(this.editMain);
+                this.editMain='新建笔记';
+                let len=this.article.length;
+                that.titleChose=this.article[len-1].id;
+                this.showKinds();
             }
             if(!that.editStatus){
                 if(that.showNoteList.length>=1){
@@ -105,16 +98,18 @@ export default {
                 }
             }
         },
-        ...mapActions([
-            'add','remove','collection'
+        ...mapMutations([
+            'add','remove','collection','change'
         ]),
         // 点击保存按钮
         save(){
-            this.add({
-                tit:this.editTitle,
+            this.change({
+                id:this.titleChose,
                 main:this.editMain
-            });
-            this.showKinds();
+            })
+            for(let i=0,len=that.article.length;i<len;i++){
+                that.showNoteList.push(that.article[i])
+            }
         },
         // 点击收藏按钮
         col(){
@@ -122,11 +117,12 @@ export default {
                 tit:this.editTitle,
                 main:this.editMain
             })
-            this.showKinds();
+            for(let i=0,len=that.article.length;i<len;i++){
+                that.showNoteList.push(that.article[i])
+            }
         },
         // 点击全部或收藏按钮
         centerBtn(n){
-            this.editStatus=false;
             var that=this;
             that.showStatus=n;
             that.showKinds();
@@ -138,7 +134,6 @@ export default {
         // 点击中间文章列表
         btnShowArtical(n){
             var that=this;
-            that.editStatus=false;
             that.titleChose=n;
             this.showArticalDetail(n)
         },
@@ -147,27 +142,31 @@ export default {
             var that=this;
             that.showNoteList=[];
             if(that.showStatus==0){
-                for(let i=0,len=that.artical.length;i<len;i++){
-                    that.showNoteList.push(that.artical[i])
+                for(let i=0,len=that.article.length;i<len;i++){
+                    that.showNoteList.push(that.article[i])
                 }
             }else{
-                for(let i=0,len=that.artical.length;i<len;i++){
-                    if(that.artical[i].status==2){
-                        that.showNoteList.push(that.artical[i])
+                for(let i=0,len=that.article.length;i<len;i++){
+                    if(that.article[i].status==2){
+                        that.showNoteList.push(that.article[i])
                     }
                 }
             }
+            console.log(that.showNoteList)
         },
         // 显示文章详情
         showArticalDetail(n){
             var that=this;
-            that.showArtical=[];
+            console.log(that.showNoteList)
             if(that.showNoteList.length>1){
                 var now_id=that.showNoteList[n].id;
-                for(let i=0,len=that.artical.length;i<len;i++){
-                    if(that.artical[i].id==now_id){
-                        that.showId=i;
-                        that.showArtical=that.artical[i];
+                that.titleChose=that.showNoteList[n].id;
+                
+                for(let i=0,len=that.article.length;i<len;i++){
+                    if(that.article[i].id==now_id){
+                        that.titleChose=i;
+                        that.editMain=that.article[i].main;
+                        console.log('xuanzhongdeneir:'+that.article[i].main)
                         return
                     }
                 }
@@ -175,10 +174,8 @@ export default {
         }
     },
     mounted(){
-        for(let i=0,len=this.artical.length;i<len;i++){
-            this.showNoteList.push(this.artical[i])
-        }
-        this.showNoteList=this.artical;
+        this.add(this.editMain);
+        this.editMain='新建笔记';
     }
 }
 </script>
@@ -280,10 +277,12 @@ export default {
 
                 li {
                     text-align: left;
-                    text-indent: 2em;
                     line-height: 1.2;
                     margin-bottom: 10px;
                     cursor: pointer;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
 
                     &:hover {
                         text-decoration: underline;
