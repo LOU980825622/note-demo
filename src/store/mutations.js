@@ -36,8 +36,13 @@ const mutations={
         state.article[data].status=2
         return
     },
-    change(){
-        console.log('文本域内容改变')
+    change(state,data){
+        for(let i=0,len=state.article.length;i<len;i++){
+            if(state.article[i].id==data.id){
+                state.article[i].main=data.main;
+                return;
+            }
+        }
     }
 }
 
