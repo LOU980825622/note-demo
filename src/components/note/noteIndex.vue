@@ -1,9 +1,14 @@
 <template>
     <div class="note">
         <ul class="note-left">
-            <li v-for="(items,index) in leftIcon" :key="index"
-             :title="items.text" @click="leftBtn(index)">
-                <div :style="{backgroundImage:'url('+items.image+')'}"></div>
+            <li @click="createNew" title="新增">
+                <div></div>
+            </li>
+            <li @click="joinCollection" title="收藏">
+                <div :class="{collected:collected}"></div>
+            </li>
+            <li @click="removeNote" title="删除">
+                <div></div>
             </li>
         </ul>
         <div class="note-center">
@@ -18,7 +23,7 @@
             <ul class="note-center-list">
                 <li v-for="(items,index) in showNoteList" :key="index" 
                     @click="btnShowArtical(index)"
-                    :class="{clrblue:index==titleChose}"
+                    :class="{clrblue:index==indexChose}"
                 >
                     {{ items.main }}
                 </li>
@@ -33,26 +38,10 @@
     </div>
 </template>
 <script>
-import leftImage1 from '../../../static/images/add.png'
-import leftImage2 from '../../../static/images/collection.png'
 import {mapState, mapMutations,mapGetters} from 'vuex'
 export default {
     data(){
         return {
-            leftIcon:[
-                {
-                    image:leftImage1,
-                    text:'添加'
-                },
-                {
-                    image:leftImage2,
-                    text:'收藏'
-                },
-                {
-                    image:leftImage1,
-                    text:'删除'
-                }
-            ],
             noteKinds:[
                 '所有','收藏'
             ],
@@ -65,6 +54,8 @@ export default {
             showStatus:0,
             collectionState:0,
             titleChose:-1,
+            collected:false,
+            indexChose:0
         }
     },
 
@@ -78,106 +69,114 @@ export default {
     },
 
     methods:{
-        // 左侧导航栏按钮
-        leftBtn(n){
-            var that=this;
-            if(n==0){
-                // this.add(this.editMain);
-                this.editMain='新建笔记';
-                this.add(this.editMain);
-                that.showNoteList=[]
-                for(let i=0,len=that.article.length;i<len;i++){
-                    that.showNoteList.push(this.article[i])
-                }
-                let len=this.showNoteList.length;
-                that.titleChose=this.showNoteList[len-1].id;
-                return
+        // 新建笔记
+        createNew(){
+            this.editMain='新建笔记';
+            this.add(this.editMain);
+            this.showNoteList=[]
+            for(let i=0,len=this.article.length;i<len;i++){
+                this.showNoteList.push(this.article[i])
             }
-            if(!that.editStatus){
-                if(that.showNoteList.length>=1){
-                    that.remove(that.showId);
-                    that.titleChose=0;
-                    that.showKinds();
-                    this.showArticalDetail(0);
-                    return;
-                }
+            let len=this.showNoteList.length;
+            this.titleChose=this.showNoteList[len-1].id;
+            this.indexChose=len-1;
+            this.collected=false
+        },
+        // 收藏笔记
+        joinCollection(){
+            if(this.showNoteList!=''){
+                this.collection({
+                    id:this.titleChose,
+                    collectNew:true
+                })
+                this.collected=!this.collected
             }
+        },
+        // 删除笔记
+        removeNote(){
+            console.log(this.titleChose)
+            // if(this.titleChose>=0){
+                this.remove(this.titleChose);
+            // }
+            if(this.article.length<=0){
+                this.createNew()
+            }
+            this.listRechange()
         },
         ...mapMutations([
             'add','remove','collection','change'
         ]),
-        // 点击保存按钮
+        // 保存笔记
         save(){
-            this.change({
-                id:this.titleChose,
-                main:this.editMain
-            })
-        },
-        // 点击收藏按钮
-        col(){
-            // this.collection({
-            //     tit:this.editTitle,
-            //     main:this.editMain
-            // })
-            // for(let i=0,len=this.article.length;i<len;i++){
-            //     this.showNoteList.push(this.article[i])
-            // }
+            if(this.showNoteList!=''){
+                this.change({
+                    id:this.titleChose,
+                    main:this.editMain
+                })
+            }
         },
         // 点击全部或收藏按钮
         centerBtn(n){
-            // var that=this;
-            // that.showStatus=n;
-            // that.showKinds();
-            // that.titleChose=0; 
-            // if(this.showNoteList!=''){
-            //     this.showArticalDetail(0)
-            // }
+            this.showStatus=n;
+            this.listRechange()
         },
         // 点击中间文章列表
         btnShowArtical(n){
-            this.titleChose=n;
-            this.editMain=this.showNoteList[n].main
-            this.change({
-                id:this.titleChose,
-                main:this.editMain
-            })
+            this.titleChose=this.showNoteList[n].id;
+            this.indexChose=n
+            this.editMain=this.showNoteList[n].main;
+            if(this.showNoteList[n].status==1){
+                this.collected=false
+            }else{
+                this.collected=true
+            }
         },
-        // 获取文章列表函数封装
-        showKinds(){
-            var that=this;
-            that.showNoteList=[];
-            // if(that.showStatus==0){
-            //     for(let i=0,len=that.article.length;i<len;i++){
-            //         that.showNoteList.push(that.article[i])
-            //     }
-            // }else{
-            //     for(let i=0,len=that.article.length;i<len;i++){
-            //         if(that.article[i].status==2){
-            //             that.showNoteList.push(that.article[i])
-            //         }
-            //     }
-            // }
-        },
-        // 显示文章详情
-        showArticalDetail(n){
-            // var that=this;
-            // if(that.showNoteList.length>1){
-            //     var now_id=that.showNoteList[n].id;
-            //     that.titleChose=that.showNoteList[n].id;
-                
-            //     for(let i=0,len=that.article.length;i<len;i++){
-            //         if(that.article[i].id==now_id){
-            //             that.titleChose=i;
-            //             that.editMain=that.article[i].main;
-            //             return
-            //         }
-            //     }
-            // }
+        // 获取笔记目录
+        listRechange(){
+            this.showNoteList=[];
+            if(this.showStatus==0){
+                for(let i=0,len=this.article.length;i<len;i++){
+                    this.showNoteList.push(this.article[i])
+                }
+                this.indexChose=0;
+                this.titleChose=this.showNoteList[0].id;
+                this.editMain=this.showNoteList[0].main;
+                if(this.showNoteList[0].status==1){
+                    this.collected=false
+                }else{
+                    this.collected=true
+                }
+                return
+            }
+            this.collected=true
+            for(let i=0,len=this.article.length;i<len;i++){
+                if(this.article[i].status==2){
+                    this.showNoteList.push(this.article[i])
+                }
+            }
+            this.indexChose=0;
+            if(this.showNoteList==''){
+                this.editMain='无收藏的笔记';
+                return   
+            }
+            this.titleChose=this.showNoteList[0].id;
+            this.editMain=this.showNoteList[0].main;
         }
     },
     mounted(){
-        // this.add(this.editMain);
-        // this.editMain='新建笔记';
+        if(this.article.length==0){
+            this.add(this.editMain);
+            this.showNoteList.push(this.article[0])
+            this.titleChose=this.showNoteList[0].id;
+            this.indexChose=0;
+        }else{
+            for(let i=0,len=this.article.length;i<len;i++){
+                this.showNoteList.push(this.article[i])
+            }
+            this.titleChose=this.showNoteList[0].id;    
+            this.indexChose=0;
+            this.editMain=this.showNoteList[0].main
+        }
     }
 }
 </script>
@@ -223,6 +222,24 @@ export default {
 
                 &:last-child {
                     transform: rotate(45deg);
+                }
+
+                &:first-child div {
+                    background-image: url(../../statics/add.png);
+                }
+
+                &:nth-child(2) {
+                    div {
+                        background-image: url(../../statics/collection.png);
+                    }
+
+                    .collected {
+                        background-image: url(../../statics/collectioned.png);
+                    }
+                }
+
+                &:last-child div {
+                    background-image: url(../../statics/add.png);
                 }
             }
         }
