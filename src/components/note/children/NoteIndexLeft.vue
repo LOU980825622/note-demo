@@ -14,30 +14,21 @@
     </div>
 </template>
 <script>
-import {mapState, mapMutations,mapGetters} from 'vuex'
+import {mapState, mapMutations} from 'vuex'
 export default {
     computed:{
         ...mapState({
             article: state=>state.article,
-            editMain:state=>state.editMain,
             showNoteList:state=>state.showNoteList,
-            indexChose:state=>state.indexChose,
-            collected:state=>state.collected
+            collected:state=>state.collected,
+            titleChose:state=>state.titleChose,
+            showStatus:state=>state.showStatus
         })
     },
     methods:{
         // 新建笔记
         createNew(){
-            // this.editMain='新建笔记';
-            // this.add(this.editMain);
-            // this.showNoteList=[]
-            // for(let i=0,len=this.article.length;i<len;i++){
-            //     this.showNoteList.push(this.article[i])
-            // }
-            // let len=this.showNoteList.length;
-            // this.titleChose=this.showNoteList[len-1].id;
-            // this.indexChose=len-1;
-            // this.collected=false
+            this.add(this);
             this.createnew()
         },
         // 收藏笔记
@@ -45,9 +36,10 @@ export default {
             if(this.showNoteList!=''){
                 this.collection({
                     id:this.titleChose,
-                    collectNew:true
                 })
-                this.collected=!this.collected
+            }
+            if(this.showStatus==1){
+                this.listRechange()
             }
         },
         // 删除笔记
@@ -59,7 +51,7 @@ export default {
             this.listRechange()
         },
         ...mapMutations([
-            'add','remove','collection','change','createnew'
+            'add','remove','collection','createnew','listRechange'
         ]),
     },
 }
