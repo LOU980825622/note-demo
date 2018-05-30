@@ -19,6 +19,15 @@ export default new Router({
             path: '/note',
             name: 'note',
             component: () => import('@/components/note/NoteIndex')
+<<<<<<< HEAD
+=======
+        },
+
+        {
+            path: '/noteleft',
+            name: 'noteleft',
+            component: () => import('@/components/note/children/NoteIndexLeft')
+>>>>>>> dev
         },
         
         // 404, 【务必】放在最后一个！
